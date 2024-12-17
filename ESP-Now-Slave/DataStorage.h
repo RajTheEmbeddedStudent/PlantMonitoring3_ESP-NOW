@@ -1,7 +1,6 @@
 #include "FS.h"
 #include "SD.h"
 #include <SPI.h>
-
 // Define CS pin for the SD card module
 #define SD_CS                  5
 
@@ -36,8 +35,10 @@ void logSDCard() {
   //Derive the name of the file from Unique ID entered by the user.
   nameSlave.concat(s_sensorData.deviceID);
   nameSlave.concat(".txt");
+//#if SIMULATIONCODE == YES
   Serial.print(F("File name is"));
   Serial.println(nameSlave);
+//#endif
   nameSlave.toCharArray(FileName, 100);
   //Create a file with appropriate name
   File file = SD.open(nameSlave);

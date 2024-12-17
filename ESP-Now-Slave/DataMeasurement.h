@@ -1,6 +1,5 @@
 #include <DHT.h>
 #include <DHT_U.h>
-#include "main.h"
 //Device ID
 #define Device_ID             10
 
