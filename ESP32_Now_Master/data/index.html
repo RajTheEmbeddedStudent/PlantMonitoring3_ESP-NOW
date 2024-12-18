@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP IoT Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-gauges@2.1.7/gauge.min.js"></script>
+</head>
+<body>
+  <div class="topnav">
+    <h1>PlanMon Dev Board</h1>
+  </div>
+  <div class="content">
+    <div id="gauge-section" class="card-grid">
+      <div class="card">
+        <p class="card-title">Temperature</p>
+        <canvas id="gauge-temperature"></canvas>
+      </div>
+      <div class="card">
+        <p class="card-title">Humidity</p>
+        <canvas id="gauge-humidity"></canvas>
+      </div>
+      <div class="card">
+        <p class="card-title">Soil Moisture</p>
+        <canvas id="gauge-moisture"></canvas>
+      </div>
+      <div class="card">
+        <p class="card-title">Light Intensity</p>
+        <canvas id="gauge-light"></canvas>
+      </div>
+    </div>
+
+    !-- Buttons to load different datasets -->
+  <div class="button-container">
+    <button id="novemberBtn">Show Node 1 Data</button>
+    <button id="decemberBtn">Show Node 2 Data</button>
+  </div>
+
+    <!-- Graphs Section (Initially Hidden) -->
+    <div id="graphs-section" class="graphs" style="display: none;">
+      <canvas id="temperature-graph"></canvas>
+      <canvas id="humidity-graph"></canvas>
+      <canvas id="moisture-graph"></canvas>
+      <canvas id="light-graph"></canvas>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

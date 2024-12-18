@@ -1,4 +1,4 @@
-#include "main.h"
+//#include "main.h"
 #include "FS.h"
 #include "SD.h"
 #include <SPI.h>
@@ -30,19 +30,6 @@ void dataStorageInit()
     Serial.println(F("ERROR - SD card initialization failed!"));
     return;    // init failed
   }
-  //Create a folder to store the Slave data.
-  if(!SD.exists("master_PlanMondata/"))
-  {
-    if(SD.mkdir("master_PlanMondata/log"))
-    {
-      Serial.println(F("Successfully created directory!!"));
-    }
-    else
-    {
-      Serial.println(F("Failed to create directory!!"));
-    }
-  }
-
 }
 
 // Write the sensor readings on the SD card
