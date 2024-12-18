@@ -32,7 +32,7 @@ void readSensorData()
     float lux = 0.0;
     float sumMoist = 0;
     float sensorVal = 0.0;
-#if SIMULATIONCODE == NO
+/*
 for(int i=0;i<10;i++)
   {
     //Read Temperature data
@@ -49,14 +49,14 @@ for(int i=0;i<10;i++)
     sensorVal = analogRead(SOILMOIST_SENSOR_PIN);
     sumMoist = sumMoist + map(sensorVal,0,4095,100,0);
   }
-#endif
-#if SIMULATIONCODE == YES
+*/
+//#if SIMULATIONCODE == YES
   //For simulating a slave sending the data without sensors
   sumTemp = 1234;
   sumHum = 5678;
   sumLight = 8765;
   sumMoist = 4321;
-#endif
+//#endif
   s_sensorData.temperature = sumTemp/10.0;
   s_sensorData.humidity = sumHum/10.0;
   s_sensorData.lightIntensity = sumLight; //(sumLight/10.0) * 10;

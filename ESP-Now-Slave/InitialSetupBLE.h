@@ -95,7 +95,13 @@ void saveUserData(const String& name, const String& location, const String& id) 
     // Concatenate "PlanMon_" with ID and copy into deviceID
     String fullDeviceID = "PlanMon_" + id;
     fullDeviceID.toCharArray(s_sensorData.deviceID, sizeof(s_sensorData.deviceID));
-
+    
+    //To be stored into Non-volatile memory
+    prefs.putString("plantname", name);
+    prefs.putString("location", location);
+    prefs.putString("deviceID", id);
+    prefs.end();
+    
     // Debugging: Print the stored values
     Serial.println(F("Stored Data:"));
     Serial.println("Device ID: " + String(s_sensorData.deviceID));

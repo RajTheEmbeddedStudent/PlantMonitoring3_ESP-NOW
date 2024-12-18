@@ -5,11 +5,11 @@
 #include "DataStorage.h"
 #include "InitialSetupBLE.h"
 
-#define YES 1
-#define NO  0
-#define SIMULATIONCODE        NO
+userDatainString g_StrUserData;
+constexpr char WIFI_SSID[] = "OnePlus11R5G";
+int32_t getWiFiChannel(const char *ssid);
 
-#define CHANNEL                1
+//#define CHANNEL                1
 
 uint8_t masterMac [6];     // masterMac [] = {0xFC, 0x71, 0xBF, 0x9D, 0xDD, 0xEC};
 esp_now_peer_info_t master;
@@ -37,7 +37,7 @@ void InitESPNow() {
 // Check if the slave is already paired with the master.
 // If not, pair the slave with master
 bool manageMaster() {   
-  if (master.channel == CHANNEL) {
+  if (master.channel == 6) {
     Serial.print(F("Master status:           "));
     // check if the peer exists
     bool exists = esp_now_is_peer_exist(master.peer_addr);
@@ -143,30 +143,43 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *r_data, int data_len) {
   if (isPaired) 
   {
     // pair success or already paired, send data back to master
-   if(String(Master_data)=="Send data")
-   {
-      sendData();
-   } 
+    sendData();
+  }
    else 
    {
     // slave pair failed
     Serial.println(F("Master pair failed!"));
    }
   }
-}
 
 
 void setup() {
   Serial.begin(115200);
+  
   dataMeasureInit();
   dataStorageInit();
-  userSetupInit();
+  prefs.begin("nodedata");
+  g_StrUserData.plantName = prefs.getString("plantname","");
+  g_StrUserData.locData = prefs.getString("location","");
+  g_StrUserData.deviceID = prefs.getString("deviceID","");
+  
+  if (g_StrUserData.plantName == "" || g_StrUserData.locData == "" || g_StrUserData.deviceID ==""){
+    Serial.println("No values saved for previously stored data,Starting Bluetooth to take the data");
+    userSetupInit();
+  }
+  else {
+   //Do nothing
+   g_StrUserData.plantName.toCharArray(s_sensorData.plantName, sizeof(s_sensorData.plantName));
+   g_StrUserData.locData.toCharArray(s_sensorData.locData, sizeof(s_sensorData.locData));
+   g_StrUserData.deviceID.toCharArray(s_sensorData.deviceID, sizeof(s_sensorData.deviceID));
+   prefs.end();
+  }
   Serial.println(F("ESPNow/Basic/Slave Node"));
   //Set device in AP mode to begin with
   WiFi.mode(WIFI_AP);
   // configure device AP mode
   const char *SSID = "Slave_1";
-  bool result = WiFi.softAP(SSID, "Slave_1  _Password", CHANNEL, 0);
+  bool result = WiFi.softAP(SSID, "Slave_1  _Password", getWiFiChannel(WIFI_SSID), 0);
   if (!result) {
     Serial.println(F("AP Config failed."));
   } else {
@@ -181,14 +194,32 @@ void setup() {
    // Init ESPNow with a fallback logic
   InitESPNow();
 
-  master.channel = CHANNEL;
-  master.ifidx = WIFI_IF_AP;
+  master.channel = getWiFiChannel(WIFI_SSID);
+  Serial.print(F("master.channel assigned: "));
+  Serial.println(master.channel);
+  master.ifidx = WIFI_IF_STA; //Was AP here.!
 
   // register callback send and receive
   esp_now_register_send_cb(OnDataSent);  
   esp_now_register_recv_cb(OnDataRecv);
   Serial.println();  
 }
+
+
+int32_t getWiFiChannel(const char *ssid) {
+  if (int32_t n = WiFi.scanNetworks()) {
+    for (uint8_t i=0; i<n; i++) {
+      if (!strcmp(ssid, WiFi.SSID(i).c_str())) {
+          Serial.print(F("getWiFiChannel returned: "));
+          Serial.println(WiFi.channel(i));
+        return WiFi.channel(i);
+      }
+    }
+  }
+  return 0;
+}
+
+// Insert your SSID
 
 void loop() {
   cnt++;

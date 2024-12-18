@@ -32,34 +32,45 @@ void dataStorageInit()
 
 // Write the sensor readings on the SD card
 void logSDCard() {
-  //Derive the name of the file from Unique ID entered by the user.
+  //File Name on the Master SD card storage depending on Slave Unique ID
   nameSlave.concat(s_sensorData.deviceID);
-  nameSlave.concat(".txt");
-//#if SIMULATIONCODE == YES
+  nameSlave.concat(".csv");
   Serial.print(F("File name is"));
   Serial.println(nameSlave);
-//#endif
   nameSlave.toCharArray(FileName, 100);
-  //Create a file with appropriate name
+
   File file = SD.open(nameSlave);
   if(!file) 
   {
     Serial.println(F("File doens't exist"));
     Serial.println(F("Creating file..."));
-    writeFile(SD, FileName, "Reading ID, Date, Hour, Temperature \r\n");
+    writeFile(SD, FileName, "ReadingID,Temperature,Humidity,Soil Moisture,Light Intensity \r\n"); //ReadingID to be replaced with timestamp in future
   }
   else 
   {
-    Serial.println(F("File already exists"));  
+    Serial.println(F("File already exists")); 
   }
   file.close();
-  //Add the data into the newly created file.
-  dataMessage = String(readingID) + "   |   " 
-               + String("Temperature")     +  " = " + String(s_sensorData.temperature)    + String(" degree Celsius") + "   |   " 
-               + String("Humidity")        +  " = " + String(s_sensorData.humidity)       + String(" %")              + "   |   " 
-               + String("Light Intensity") +  " = " + String(s_sensorData.lightIntensity) + String(" Lux")            + "   |   " 
-               + String("Soil Moisture")   +  " = " + String(s_sensorData.soilMoisture)   + String(" %")              + "\r\n";
+
+  dataMessage = String(readingID)               + ","  //In Future, this must be replaced with Timestamp
+              + String(s_sensorData.temperature)    + "," 
+              + String(s_sensorData.humidity)       + "," 
+              + String(s_sensorData.lightIntensity) + "," 
+              + String(s_sensorData.soilMoisture)   + "\r\n";
   appendFile(SD, FileName, dataMessage.c_str());
+  //Once appending is successful reset the Filename string.
+  nameSlave = "/";
+  //Print the storing to SD Card data ; Enable for debugging only
+  Serial.print(F("Saving to SD Card Device number: "));
+  Serial.println(s_sensorData.deviceID);
+  Serial.print(F("Saving to SD Card Temperature: "));
+  Serial.println(s_sensorData.temperature);
+  Serial.print(F("Saving to SD Card Humidity: "));
+  Serial.println(s_sensorData.humidity);
+  Serial.print(F("Saving to SD Card Light Intensity: "));
+  Serial.println(s_sensorData.lightIntensity); 
+  Serial.print(F("Saving to SD Card SoilMoisture: "));
+  Serial.println(s_sensorData.soilMoisture);
 }
 
 // Write to the SD card (DON'T MODIFY THIS FUNCTION)
